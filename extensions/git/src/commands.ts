@@ -1170,7 +1170,7 @@ export class CommandCenter {
 		const noUnstagedChanges = repository.workingTreeGroup.resourceStates.length === 0;
 
 		// no changes, and the user has not configured to commit all in this case
-		if (!noUnstagedChanges && noStagedChanges && !enableSmartCommit) {
+		if (!noUnstagedChanges && noStagedChanges && !enableSmartCommit && (!opts || !opts.amend)) {
 
 			// prompt the user if we want to commit all or not
 			const message = localize('no staged changes', "There are no staged changes to commit.\n\nWould you like to automatically stage all your changes and commit them directly?");
