@@ -41,10 +41,10 @@ async function createModel(context: ExtensionContext, outputChannel: OutputChann
 	const model = new Model(git, context.globalState, outputChannel);
 	disposables.push(model);
 
-	commands.registerCommand('git.editor', () => setVsCodeAsGitEditor(git, outputChannel));
-	commands.registerCommand('git.diffTool', () => setVsCodeAsGitDiffTool(git, outputChannel));
-	commands.registerCommand('git.mergeTool', () => setVsCodeAsGitMergeTool(git, outputChannel));
-	commands.registerCommand('git.gitTools', () => setVsCodeAsGitTools(git, outputChannel));
+	commands.registerCommand('git.setGitEditor', () => setVsCodeAsGitEditor(git, outputChannel));
+	commands.registerCommand('git.setGitDiffTool', () => setVsCodeAsGitDiffTool(git, outputChannel));
+	commands.registerCommand('git.setGitMergeTool', () => setVsCodeAsGitMergeTool(git, outputChannel));
+	commands.registerCommand('git.setGitTools', () => setVsCodeAsGitTools(git, outputChannel));
 
 	const onRepository = () => commands.executeCommand('setContext', 'gitOpenRepositoryCount', `${model.repositories.length}`);
 	model.onDidOpenRepository(onRepository, null, disposables);
