@@ -41,11 +41,6 @@ async function createModel(context: ExtensionContext, outputChannel: OutputChann
 	const model = new Model(git, context.globalState, outputChannel);
 	disposables.push(model);
 
-	commands.registerCommand('git.setGitEditor', () => setVsCodeAsGitEditor(git, outputChannel));
-	commands.registerCommand('git.setGitDiffTool', () => setVsCodeAsGitDiffTool(git, outputChannel));
-	commands.registerCommand('git.setGitMergeTool', () => setVsCodeAsGitMergeTool(git, outputChannel));
-	commands.registerCommand('git.setGitTools', () => setVsCodeAsGitTools(git, outputChannel));
-
 	const onRepository = () => commands.executeCommand('setContext', 'gitOpenRepositoryCount', `${model.repositories.length}`);
 	model.onDidOpenRepository(onRepository, null, disposables);
 	model.onDidCloseRepository(onRepository, null, disposables);
@@ -160,78 +155,6 @@ export async function activate(context: ExtensionContext): Promise<GitExtension>
 		await warnAboutMissingGit();
 
 		return createGitExtension();
-	}
-}
-
-async function setVsCodeAsGitEditor(git: Git, outputChannel: OutputChannel, vscodeExe?: string): Promise<boolean> {
-	vscodeExe = vscodeExe || await findVsCodeExeInPath();
-
-	if (await setGitGlobalConfig(git, 'core.editor', `"${vscodeExe}" --wait`)) {
-		window.showInformationMessage(localize('successGitEditor', "Visual Studio Code has been successfully set as git editor"));
-		return true;
-	} else {
-		window.showErrorMessage(localize('failGitEditor', "Failed to set Visual Studio Code as git editor"))
-		.then(_ =>{
-			outputChannel.show();
-		});
-		return false;
-	}
-}
-
-async function setVsCodeAsGitDiffTool(git: Git, outputChannel: OutputChannel, vscodeExe?: string): Promise<boolean> {
-	vscodeExe = vscodeExe || await findVsCodeExeInPath();
-
-	if (await setGitGlobalConfig(git, 'difftool.vscode.cmd', `"${vscodeExe}" --wait --diff "$LOCAL" "$REMOTE"`)
-		&& await setGitGlobalConfig(git, 'diff.tool', 'vscode')) {
-		window.showInformationMessage(localize('successDiffTool', "Visual Studio Code has been successfully set as diff tool"));
-		return true;
-	} else {
-		window.showErrorMessage(localize('failDiffTool', "Failed to set Visual Studio Code as diff tool"))
-			.then(_ =>{
-				outputChannel.show();
-			});
-		return false;
-	}
-}
-
-async function setVsCodeAsGitMergeTool(git: Git, outputChannel: OutputChannel, vscodeExe?: string): Promise<boolean> {
-	vscodeExe = vscodeExe || await findVsCodeExeInPath();
-
-	if (await setGitGlobalConfig(git, 'mergetool.vscode.cmd', `"${vscodeExe}" --wait "$MERGED"`)
-		&& await setGitGlobalConfig(git, 'merge.tool', 'vscode')) {
-		window.showInformationMessage(localize('successMergeTool', "Visual Studio Code has been successfully set as merge tool"));
-		return true;
-	} else {
-		window.showErrorMessage(localize('failMergeTool', "Failed to set Visual Studio Code as merge tool"))
-		.then(_ =>{
-			outputChannel.show();
-		});
-		return false;
-	}
-}
-
-async function setVsCodeAsGitTools(git: Git, outputChannel: OutputChannel): Promise<boolean> {
-	var vscodeExe = await findVsCodeExeInPath();
-	return await setVsCodeAsGitEditor(git, outputChannel, vscodeExe)
-		&& await setVsCodeAsGitDiffTool(git, outputChannel, vscodeExe)
-		&& await setVsCodeAsGitMergeTool(git, outputChannel, vscodeExe);
-}
-
-async function findVsCodeExeInPath(): Promise<string> {
-	return require('electron').remote.app;
-}
-
-async function setGitGlobalConfig(git: Git, key: string, value: string): Promise<boolean> {
-	try {
-		const res = await git.exec('.', ['config', '--global', key, value]);
-		if (res.exitCode !== 0) {
-			console.error('Fail to set git setting. Error: \n' + res.stderr);
-			return false;
-		}
-		return true;
-	} catch (error) {
-		console.error('Fail to set git setting. Error: \n' + error);
-		return false;
 	}
 }
 
