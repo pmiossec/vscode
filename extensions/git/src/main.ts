@@ -170,8 +170,10 @@ async function setVsCodeAsGitEditor(git: Git, outputChannel: OutputChannel, vsco
 		window.showInformationMessage(localize('successGitEditor', "Visual Studio Code has been successfully set as git editor"));
 		return true;
 	} else {
-		window.showErrorMessage(localize('failGitEditor', "Failed to set Visual Studio Code as git editor. See OUTPUT panel form more details"));
-		outputChannel.show();
+		window.showErrorMessage(localize('failGitEditor', "Failed to set Visual Studio Code as git editor"))
+		.then(_ =>{
+			outputChannel.show();
+		});
 		return false;
 	}
 }
@@ -184,8 +186,10 @@ async function setVsCodeAsGitDiffTool(git: Git, outputChannel: OutputChannel, vs
 		window.showInformationMessage(localize('successDiffTool', "Visual Studio Code has been successfully set as diff tool"));
 		return true;
 	} else {
-		window.showErrorMessage(localize('failDiffTool', "Failed to set Visual Studio Code as diff tool. See OUTPUT panel form more details"));
-		outputChannel.show();
+		window.showErrorMessage(localize('failDiffTool', "Failed to set Visual Studio Code as diff tool"))
+			.then(_ =>{
+				outputChannel.show();
+			});
 		return false;
 	}
 }
@@ -198,8 +202,10 @@ async function setVsCodeAsGitMergeTool(git: Git, outputChannel: OutputChannel, v
 		window.showInformationMessage(localize('successMergeTool', "Visual Studio Code has been successfully set as merge tool"));
 		return true;
 	} else {
-		window.showErrorMessage(localize('failMergeTool', "Failed to set Visual Studio Code as merge tool. See OUTPUT panel form more details"));
-		outputChannel.show();
+		window.showErrorMessage(localize('failMergeTool', "Failed to set Visual Studio Code as merge tool"))
+		.then(_ =>{
+			outputChannel.show();
+		});
 		return false;
 	}
 }
