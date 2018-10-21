@@ -1917,7 +1917,7 @@ export class CommandCenter {
 	async setVsCodeAsGitEditor(): Promise<boolean> {
 		const vscodeExe = this.getVsCodePath();
 
-		if (await this.setGitGlobalConfig(this.git, 'core.editor', `"${vscodeExe}" --wait`)) {
+		if (await this.setGitGlobalConfig('core.editor', `"${vscodeExe}" --wait`)) {
 			window.showInformationMessage(localize('successGitEditor', "Visual Studio Code has been successfully set as git editor"));
 			return true;
 		} else {
@@ -1933,8 +1933,8 @@ export class CommandCenter {
 	async setVsCodeAsGitDiffTool(): Promise<boolean> {
 		const vscodeExe = this.getVsCodePath();
 
-		if (await this.setGitGlobalConfig(this.git, 'difftool.vscode.cmd', `"${vscodeExe}" --wait --diff "$LOCAL" "$REMOTE"`)
-			&& await this.setGitGlobalConfig(this.git, 'diff.tool', 'vscode')) {
+		if (await this.setGitGlobalConfig('difftool.vscode.cmd', `"${vscodeExe}" --wait --diff "$LOCAL" "$REMOTE"`)
+			&& await this.setGitGlobalConfig('diff.tool', 'vscode')) {
 			window.showInformationMessage(localize('successDiffTool', "Visual Studio Code has been successfully set as diff tool"));
 			return true;
 		} else {
@@ -1950,8 +1950,8 @@ export class CommandCenter {
 	async setVsCodeAsGitMergeTool(): Promise<boolean> {
 		const vscodeExe = this.getVsCodePath();
 
-		if (await this.setGitGlobalConfig(this.git, 'mergetool.vscode.cmd', `"${vscodeExe}" --wait "$MERGED"`)
-			&& await this.setGitGlobalConfig(this.git, 'merge.tool', 'vscode')) {
+		if (await this.setGitGlobalConfig('mergetool.vscode.cmd', `"${vscodeExe}" --wait "$MERGED"`)
+			&& await this.setGitGlobalConfig('merge.tool', 'vscode')) {
 			window.showInformationMessage(localize('successMergeTool', "Visual Studio Code has been successfully set as merge tool"));
 			return true;
 		} else {
@@ -1974,9 +1974,9 @@ export class CommandCenter {
 		return require('electron').remote.app;
 	}
 
-	private async setGitGlobalConfig(git: Git, key: string, value: string): Promise<boolean> {
+	private async setGitGlobalConfig(key: string, value: string): Promise<boolean> {
 		try {
-			const res = await git.exec('.', ['config', '--global', key, value]);
+			const res = await this.git.exec('.', ['config', '--global', key, value]);
 			if (res.exitCode !== 0) {
 				console.error('Fail to set git setting. Error: \n' + res.stderr);
 				return false;
